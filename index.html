@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Brick Pattern Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .brick-wall {
+            background-image: linear-gradient(335deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.05) 100%);
+            background-size: 50px 25px;
+            transition: all 0.3s ease;
+        }
+        .controls-panel {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-['Inter']">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4">
+            <div class="container mx-auto">
+                <h1 class="text-2xl font-bold text-gray-800">Brick Pattern Generator</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto p-4 flex flex-col md:flex-row gap-4">
+            <!-- Pattern Preview -->
+            <div class="w-full md:w-2/3 bg-white rounded-lg shadow-lg overflow-hidden">
+                <div id="brickWall" class="brick-wall w-full h-[400px] md:h-[600px]"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="w-full md:w-1/3">
+                <div class="controls-panel bg-white/80 p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4">Customize Pattern</h2>
+                    
+                    <!-- Color Controls -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Brick Color
+                        </label>
+                        <input type="color" id="brickColor" value="#4A90A0" 
+                            class="w-full h-10 rounded cursor-pointer">
+                    </div>
+
+                    <!-- Size Controls -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Brick Size
+                        </label>
+                        <input type="range" id="brickSize" min="20" max="100" value="50" 
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <!-- Gap Controls -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Mortar Gap
+                        </label>
+                        <input type="range" id="gapSize" min="1" max="10" value="2" 
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    </div>
+
+                    <!-- Export Button -->
+                    <button onclick="exportPattern()" 
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="bi bi-download mr-2"></i>Export Pattern
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white mt-8 py-4">
+            <div class="container mx-auto text-center text-gray-600">
+                <p>Created with ❤️ by Widecanvas.ai</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const brickWall = document.getElementById('brickWall');
+        const brickColorInput = document.getElementById('brickColor');
+        const brickSizeInput = document.getElementById('brickSize');
+        const gapSizeInput = document.getElementById('gapSize');
+
+        function updatePattern() {
+            const color = brickColorInput.value;
+            const size = brickSizeInput.value;
+            const gap = gapSizeInput.value;
+
+            brickWall.style.backgroundColor = color;
+            brickWall.style.backgroundImage = `
+                linear-gradient(335deg, 
+                    rgba(255,255,255,${gap/20}) 0%,
+                    rgba(255,255,255,${gap/20}) 100%)
+            `;
+            brickWall.style.backgroundSize = `${size}px ${size/2}px`;
+        }
+
+        function exportPattern() {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            // Draw background
+            ctx.fillStyle = brickColorInput.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = 'brick-pattern.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Event listeners
+        brickColorInput.addEventListener('input', updatePattern);
+        brickSizeInput.addEventListener('input', updatePattern);
+        gapSizeInput.addEventListener('input', updatePattern);
+
+        // Initial pattern
+        updatePattern();
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
